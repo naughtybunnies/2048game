@@ -24,6 +24,7 @@ class Robot:
             pass
         else:
             self.socserv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socserv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.socserv.connect((self.host, int(self.port)))
 
             sentstring = self.serializeState(instate)
@@ -36,11 +37,12 @@ class Robot:
             nextmove = self.socserv.recv(2048)
             trecv = time.time()
             print("Received :"+str(nextmove))
-            print("At : "+time.strftime("%H:%M:%S", time.localtime(tsent)))
+            print("At : "+time.strftime("%H:%M:%S", time.localtime(trecv)))
 
             ttotal = trecv-tsent
 
             print("Total Time Taken(s) : "+str(ttotal))
+            #self.socserv.shutdown(socket.SHUT_RDWR)
             self.socserv.close()
             ## nextmove = self.emulateServer()
 
@@ -52,6 +54,7 @@ class Robot:
             self.socserv.connect((self.host, int(self.port)))
             self.socserv.close()
         except Exception:
+            self.socserv.shutdown(socket.SHUT_RDWR)
             self.socserv.close()
             return 0
 

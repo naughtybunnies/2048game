@@ -42,7 +42,9 @@ class controller:
         self.calNextMove()
 
     def calNextMove(self):
-        nextmove = self.rbt.calNextMove(self.gameboard.getBoard())
+        test = [[2,2,0,2],[0,0,0,0],[2,0,8,16],[0,2,0,4]]
+        nextmove = self.rbt.calNextMove(test)
+        #nextmove = self.rbt.calNextMove(self.gameboard.getBoard())
         return nextmove
 
     def restart(self, event):
@@ -101,26 +103,29 @@ class controller:
     def robotMode(self, event):
         if(self.checkServer()):
             self.view.robotAvailable()
+            self.window.update()
             for i in range(10):
                 if(self.gameboard.lost_status == 1):
                     break
                 self.view.robotOn(i)
-
+                self.window.update()
                 print("robot is playing move" + str(i))
                 nextmove = self.calNextMove()
-
-                if(nextmove == "U"):
+                self.window.update()
+                if(nextmove == "u"):
                     self.moveup()
-                elif(nextmove == "D"):
+                elif(nextmove == "d"):
                     self.movedown()
-                elif(nextmove == "L"):
+                elif(nextmove == "l"):
                     self.moveleft()
                 else:
                     self.moveright()
                 self.window.update()
             self.view.robotOff()
+            self.window.update()
         else:
             self.view.robotUnavailable()
+            self.window.update()
 
     def getBoard(self):
         self.gameboard.getBoard()

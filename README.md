@@ -17,7 +17,7 @@ ___
    * How to use this project
 5. Conclusion
 6. Acknowledgement
-   * contributors
+   * Contributors
    ___
 
 ## Abstract
@@ -33,7 +33,7 @@ Nowadays, Cloud Technologies is becoming a new standard of providing services. M
 
 Many businesses shift toward using those services on cloud. Co-location and On-premises machines are becoming less popular and are being used to serve some specific purposes only.
 
-The aim of this project is to simulate creating and using High Performance Computing(HPC) to calculate complex scientific calculation. In this project we decided to use Google Compute Engine , which is a virtual machine service that Google Cloud Platform provides, as computing nodes. And we created a simple AI program to calculate best move for 2048 game as the scientific computation. User mays use personal computer with GUI to see the robot play the game.
+The aim of this project is to simulate creating and using High Performance Computing(HPC) to calculate complex scientific calculation. In this project we decided to use Google Compute Engine , which is a virtual machine service that Google Cloud Platform provides, as computing nodes. And we created a simple AI program to calculate best move for 2048 game as the scientific computation. User may use personal computer with GUI to see the robot play the game.
 ___
 
 
@@ -45,12 +45,12 @@ ___
 
 
 ### Client Side
-At the client side, the clien side script, implemented in python,is running 2048 Game GUI and send board state to the server using SocketAPI to communicate with the server.
+At the client side, the client side script, implemented in python,is running 2048 Game GUI and send board state to the server using SocketAPI to communicate with the server.
 ![gui](./image/gui2.png)
 
 
 ### Server Side
-The master node will generate a tree of possible states(tasks) and calculate probabilty of each state then distribute to slaves nodes to evaluate hueristic score. Then master will reduce the maxmimum score from each node and send the best move back to the client using SocketAPI.
+The master node will generate a tree of possible states(tasks) and calculate probability of each state then distribute to slave nodes to evaluate hueristic score. Then master will reduce the maxmimum score from each node and send the best move back to the client using SocketAPI.
 ![tree](./image/tree2.png)
 
 We could calculate the upperbound of the number of tasks by
@@ -404,7 +404,7 @@ Some explanation about the files :
     - robot.py provides adapter for communicating with the server via SocketAPI
 
 ### Part 3 : Server Side Implementation (Parallel Program)
-The Master node receive a string of board state, then it decodes and generate a tree at master node. Then it behaves as tasks scheduler and distribute the task to slaves. The code is shown below.
+The Master node receives a string of board state, then it decodes and generates a tree at master node. Then it behaves as tasks scheduler and distribute the task to slaves. The code is shown below.
 We implemented our server script in this link below.
 
 https://github.com/naughtybunnies/2048game_server
@@ -446,14 +446,15 @@ ___
 
 From the result above, it shows that parallel computing gives better computation time, which combined with repetitive calculation, and could help reduce total time to reach highscore faster. This really highlight the advantage of using parallel computing. Also MPI is a very useful communication method, using MPI with python could reduce a lot of developing time and the result is satisfying. Communication between server and client using SocketAPI is important as it allows us to send the problem from our machine to have to cloud compute it. This is cloud computing which is the point that this project stress on. 
 
-Despite being only a simulation of using HPC, this projects illustrate multiple consideration of designing a cluster of computation node, deployment of the system, parallel programming and evaluation of the result. This project also shows potential of parallel computing to solve more complex problems which, in fact, many organizations are using nowaday such as BitCoin mining or CERN's grid computing.
+Despite being only a simulation of using HPC, this project illustrates multiple consideration of designing a cluster of computation node, deployment of the system, parallel programming and evaluation of the result. This project also shows potential of parallel computing to solve more complex problems which, in fact, many organizations are using nowaday such as BitCoin mining or CERN's grid computing.
 
 There are some difficulties we faced in this project, some may be mitigated and some may be alive bugs in our program.
 1. There are more features that MPI provides which we did not fully used, such as MPI support InfiniBand communication method and the nodes could not satisfy, this is a point that reduce the system throughput.
 2. This project is not fault tolerance, some request into the program might caused it to stop execution.(a simple telnet with some string will do)
 3. GUI is not behaving right some times.
 
-Future Perspective and Improvement
+#### Future Perspective and Improvement
+
 We would like to leave some thought that we stumbled upon during doing this project.
 
 1. Though parallel computing helps a lot to reduce computation time, but combining with hueristic searching and optimized algorithm would result a better program.

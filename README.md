@@ -517,7 +517,7 @@ NOTE: The Parallel Computing node will be running on cloud until (approx) July 1
     python3 main.py
     ```
 ___Screenshot in the latest version___
-![v001](./image/001.png)
+![v000](./image/v000.png)
 
 ___
 

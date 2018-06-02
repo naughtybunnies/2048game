@@ -42,9 +42,9 @@ class controller:
         self.calNextMove()
 
     def calNextMove(self):
-        test = [[2,2,0,2],[0,0,0,0],[2,0,8,16],[0,2,0,4]]
-        nextmove = self.rbt.calNextMove(test)
-        #nextmove = self.rbt.calNextMove(self.gameboard.getBoard())
+        #test = [[2,2,0,2],[0,0,0,0],[2,0,8,16],[0,2,0,4]]
+        #nextmove = self.rbt.calNextMove(test)
+        nextmove = self.rbt.calNextMove(self.gameboard.getBoard())
         return nextmove
 
     def restart(self, event):

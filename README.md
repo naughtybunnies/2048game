@@ -56,10 +56,9 @@ The master node will generate a tree of possible states(tasks) and calculate pro
 We could calculate the upperbound of the number of tasks by
 $$ upperbound(depth = d, availableholes = h) = 8^{d} * P(h,d) = \frac{h!}{(h-d)!}$$
 Assume
-1. Half of the board is occupied
-2. No merge happens  
+1. All moves create perfect merge, resulting 2 tiles on the board
 
-Thus, averagely 16 holes are available. Then the upperbound of the number of tasks when depth is 3 is 172,032 possibilities.
+Thus, the upperbound of the number of tasks when depth is 3 is 1,118,208 possibilities.
 
 In this project, we experiment only with __4x4__ board with depth = __3__.
 
@@ -115,33 +114,32 @@ time_{server\_received} $$" /></a>
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\dpi{100}&space;\large&space;$$&space;time_{total}&space;=&space;time_{client\_received}&space;-&space;time_{client\_sent}&space;$$" target="_blank"><img src="https://latex.codecogs.com/png.latex?\inline&space;\dpi{100}&space;\large&space;$$&space;time_{total}&space;=&space;time_{client\_received}&space;-&space;time_{client\_sent}&space;$$" title="\large $$ time_{total} = time_{client\_received} - time_{client\_sent} $$" /></a>
 
-And are illustrated below
+Note - We fixed the number of process to 4.
+
+Data we collected from our test data
+![evaluation](./image/evaluate.png)
+
 ```
-time(ms)
-    |         ||
-    |         ||
-    |         ||
-    |      || ||
-    |      || ||
-    |______||_||______________________
-            iteration
+Test Data
+1 - hole  [[0,8,4,2],[2,4,8,4],[2,4,8,16],[2,2,4,4]]
+2 - holes [[0,0,4,2],[2,4,8,4],[2,4,8,16],[2,2,4,4]]
+3 - holes [[0,0,0,2],[2,4,8,4],[2,4,8,16],[2,2,4,4]]
+4 - holes [[0,0,0,0],[2,4,8,4],[2,4,8,16],[2,2,4,4]]
+...
+8 - holes [[0,0,0,0],[0,0,0,0],[2,4,8,16],[2,2,4,4]]
 ```
 
 #### Execution time compared to Linear Program
-Average 100 trials, each with same starting input
-```
-time(ms)
-    |         ||
-    |         ||
-    |         ||
-    |      || ||
-    |      || ||
-    |______||_||______________________
-            iteration
-```
+
+![seqvspar](./image/seqvspar.png)
+
+#### Parallel task vs Generating nodes(AI task) vs communication task
+
+AOF's
 
 #### Evaluation
-It is very obvious that parallel program performs better from graphs above. Because distributing the nodes to compute heuristic score takes more time than communication time. But we could evaluate the speedup and efficiency by.
+From the graphs above, it could be seen that parallel program win sequential program in every computation task. But we explored more to evaluate our program, we found out that most of the execution time were spent on generating tasks by the master node. If we could distribute generating node tasks to other node, it could increase the efficiency of the program.
+Anyway we could evaluate the speedup and efficiency by.
 
 Recall Efficiency
 
@@ -151,9 +149,12 @@ Where
 
 In our project we got
 ```
-.............
-
+At available holes = 8
+SpeedUp = 24.5/17.38 = 1.409
+Efficiency = 0.35
 ```
+Which means most of the time were spent on communication tasks, and indeed it is. Because our computation tasks(computing hueristic function using parallel) were very simple and they take less time than generating nodes(AI task) and they also take less time than communication. But it still could create different result if we run the program for a thousand of iteration. That could result in saving many hours.
+
 ___
 
 
@@ -410,7 +411,85 @@ We implemented our server script in this link below.
 https://github.com/naughtybunnies/2048game_server
 
 ```
-code
+def main():
+    moves = [[moveleft,'l'], [moveright,'r'], [moveup,'u'], [movedown,'d']]
+    nodesGenerated = False
+    if rank == 0:
+        ## accept incoming request
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
+        s.bind((HOST, PORT))
+        nodes = None
+        while 1 :
+            s.listen()
+            conn, addr = s.accept()
+            print('Connected by', addr)
+            while True:
+                data = conn.recv(1024)
+                ## break from loop if it only receive pingServer request
+                if not data: break
+                data = data.decode()
+                data = data.split(',') # data[0] is board size, data[1] is board data
+                size = int(data[0])
+                strData = data[1]
+                print("DESERIALIZING",end=" ")
+                listBoard = deSerializeState(size, strData)
+                print("DONE")
+                ## Perform AI task
+                print("GENERATING NODES",end=" ")
+                nodes = generateNode.genNodeController(listBoard, moves)
+                nodesGenerated = True
+                print("DONE")
+                break
+            #endwhile
+            print("nodesGenerated: ",nodesGenerated)
+            if nodesGenerated: break
+        #endwhile
+    #endif
+    else:
+        nodes = None
+        splitNodes = None
+    if rank == 0:
+        size = comm.Get_size()
+        splitNodes = [nodes[i::size] for i in range(size)]
+    ## scatter the data
+    nodes = comm.scatter(splitNodes, root=0)
+    if nodes is not None:
+        maxScore = 0
+        bestNode = None
+        print("RANK",rank,"HAS",len(nodes),"NODES")
+        print("RANK",rank,"IS EVALUATING")
+        for node in nodes :
+            p = evaluation.slopedBoard(node[1])
+            score = node[2]*p
+            if maxScore < score :
+                maxScore = score
+                bestNode = node
+                bestNode[2] = score
+            #endif
+        #endfor
+        print("RANK",rank,"DONE")
+        comm.Barrier()
+        comm.send(bestNode, dest=0, tag=1)
+    #endif
+    ## gather the data
+    bestNodes = comm.gather(bestNode, root=0)
+    ## master perform ranking
+    if rank == 0 :
+        bestNode = [0,0,0]
+        #print("BEST NODES LIST")
+        for n in bestNodes:
+            print(n)
+
+        for node in bestNodes :
+            if bestNode[2] < node[2]:
+                bestNode = node
+        nextMove = bestNode[0][0]
+        dataTosend = bytes(nextMove, encoding="utf-8")
+        ## send nextmove back to client
+        conn.send(dataTosend)
+        conn.close()
+#endif
 ```
 
 
@@ -444,7 +523,7 @@ ___
 
 ### Part 5 : Conclusion 
 
-From the result above, it shows that parallel computing gives better computation time, which combined with repetitive calculation, and could help reduce total time to reach highscore faster. This really highlight the advantage of using parallel computing. Also MPI is a very useful communication method, using MPI with python could reduce a lot of developing time and the result is satisfying. Communication between server and client using SocketAPI is important as it allows us to send the problem from our machine to have to cloud compute it. This is cloud computing which is the point that this project stress on. 
+From the result above, it shows that parallel computing gives better computation time, which combined with repetitive calculation, and could help reduce total time much faster. This really highlight the advantage of using parallel computing. Also MPI is a very useful communication method, using MPI with python could reduce a lot of developing time and the result is satisfying. Communication between server and client using SocketAPI is important as it allows us to send the problem from our machine to have to cloud compute it. This is cloud computing which is the point that this project stress on. 
 
 Despite being only a simulation of using HPC, this project illustrates multiple consideration of designing a cluster of computation node, deployment of the system, parallel programming and evaluation of the result. This project also shows potential of parallel computing to solve more complex problems which, in fact, many organizations are using nowaday such as BitCoin mining or CERN's grid computing.
 
@@ -460,6 +539,8 @@ We would like to leave some thought that we stumbled upon during doing this proj
 1. Though parallel computing helps a lot to reduce computation time, but combining with hueristic searching and optimized algorithm would result a better program.
 2. Combining parallel computing, cloud computing and parallel programming might turn into an interesting thing. For example, a cluster of computation node that could compute a any function passed into them. (Cloud Map-Reduce)
 3. It would be better if we wrote tests from the very beginning of the development. As we proceded to later part, it is impossible to write all the tests and debugging this program in both parallel aspect, communication aspect and the game aspect itself was disastrous.
+4. An idea to save cost for computation engine, may be a script to scale up engines before running a certain codes then scale down or turn off engines.
+5. The parallel task only includes calculating hueristic function, the system would be more efficient if we could make the AI task becomes parallel task.(In the perspective of AI computating, not scientific computation which we focused in this project)
 
 There also are some more points that could improve this project such as better GUI and handling input, implement the server program that is more fault tolerant, use some optimized algorithm, and use more functions and advantages that MPI provides
 ### Part 6 : Acknowledgement

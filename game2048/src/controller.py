@@ -42,9 +42,10 @@ class controller:
         self.calNextMove()
 
     def calNextMove(self):
-        #test = [[2,2,0,2],[0,0,0,0],[2,0,8,16],[0,2,0,4]]
-        #nextmove = self.rbt.calNextMove(test)
-        nextmove = self.rbt.calNextMove(self.gameboard.getBoard())
+        ## create test matrix here to test time
+        test = [[0,8,4,2],[2,4,8,4],[2,4,8,16],[2,2,4,4]]
+        nextmove = self.rbt.calNextMove(test)
+        #nextmove = self.rbt.calNextMove(self.gameboard.getBoard())
         return nextmove
 
     def restart(self, event):

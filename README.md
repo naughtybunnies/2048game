@@ -517,7 +517,7 @@ NOTE: The Parallel Computing node will be running on cloud until (approx) July 1
 2. Run the game
 
     ```
-    cd 2048game
+    cd 2048game/2048game
     python3 main.py
     ```
 ___Screenshot in the latest version___

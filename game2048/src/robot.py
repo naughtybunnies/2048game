@@ -36,6 +36,7 @@ class Robot:
 
             nextmove = self.socserv.recv(2048)
             trecv = time.time()
+            nextmove = nextmove.decode()
             print("Received :"+str(nextmove))
             print("At : "+time.strftime("%H:%M:%S", time.localtime(trecv)))
 

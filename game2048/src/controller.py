@@ -111,15 +111,19 @@ class controller:
                 self.view.robotOn(i)
                 self.window.update()
                 print("robot is playing move" + str(i))
-                nextmove = self.calNextMove()
+                nextmove = str(self.calNextMove())
                 self.window.update()
                 if(nextmove == "u"):
+                    print("go up")
                     self.moveup()
                 elif(nextmove == "d"):
+                    print("go down")
                     self.movedown()
                 elif(nextmove == "l"):
+                    print("go left")
                     self.moveleft()
                 else:
+                    print("go right")
                     self.moveright()
                 self.window.update()
             self.view.robotOff()

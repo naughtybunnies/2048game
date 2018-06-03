@@ -14,7 +14,7 @@ ___
        * Cloud configuration - installing MPI4PY and setting up
        * Client side script
        * Server side script - Parallel Program
-   * How to use this project
+   * [How to use this project](https://github.com/naughtybunnies/2048game#part-4--how-to-use-this-project)
 5. Conclusion
 6. Acknowledgement
    * Contributors
@@ -517,7 +517,7 @@ NOTE: The Parallel Computing node will be running on cloud until (approx) July 1
 2. Run the game
 
     ```
-    cd 2048game
+    cd 2048game/2048game
     python3 main.py
     ```
 ___Screenshot in the latest version___

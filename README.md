@@ -54,7 +54,7 @@ The master node will generate a tree of possible states(tasks) and calculate pro
 ![tree](./image/tree2.png)
 
 We could calculate the upperbound of the number of tasks by
-$$ upperbound(depth = d, availableholes = h) = 8^{d} * P(h,d) = \frac{h!}{(h-d)!}$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=$$&space;upperbound(depth&space;=&space;d,&space;availableholes&space;=&space;h)&space;=&space;8^{d}&space;*&space;P(h,d)&space;=&space;\frac{h!}{(h-d)!}$$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?$$&space;upperbound(depth&space;=&space;d,&space;availableholes&space;=&space;h)&space;=&space;8^{d}&space;*&space;P(h,d)&space;=&space;\frac{h!}{(h-d)!}$$" title="$$ upperbound(depth = d, availableholes = h) = 8^{d} * P(h,d) = \frac{h!}{(h-d)!}$$" /></a>
 Assume
 1. All moves create perfect merge, resulting 2 tiles on the board
 
@@ -521,7 +521,7 @@ NOTE: The Parallel Computing node will be running on cloud until (approx) July 1
     python3 main.py
     ```
 ___Screenshot in the latest version___
-![v001](./image/v001.png)
+![v000](./image/v000.png)
 
 ___
 

@@ -135,7 +135,11 @@ Test Data
 
 #### Parallel task vs Generating nodes(AI task) vs communication task
 
-AOF's
+
+![aof1](./image/aof1.png)
+![aof2](./image/aof2.png)
+
+From the graph above, we could see that internet connection play little role on overall computation time.
 
 #### Evaluation
 From the graphs above, it could be seen that parallel program win sequential program in every computation task. But we explored more to evaluate our program, we found out that most of the execution time were spent on generating tasks by the master node. If we could distribute generating node tasks to other node, it could increase the efficiency of the program.

@@ -14,7 +14,7 @@ ___
        * Cloud configuration - installing MPI4PY and setting up
        * Client side script
        * Server side script - Parallel Program
-   * How to use this project
+   * [How to use this project](https://github.com/naughtybunnies/2048game#part-4--how-to-use-this-project)
 5. Conclusion
 6. Acknowledgement
    * Contributors

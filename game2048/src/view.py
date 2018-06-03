@@ -37,7 +37,7 @@ class View:
 
     def robotAvailable(self):
         self.debug_canvas.delete('robotavail')
-        self.debug_canvas.create_text(40,40, font=("Helvetica", 16), text="Connection Available",tags=("robotavail"))
+        self.debug_canvas.create_text(100,40, font=("Helvetica", 16), text="Connection Available",tags=("robotavail"))
 
     def robotUnavailable(self):
         self.debug_canvas.delete('robotavail')

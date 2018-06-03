@@ -105,7 +105,7 @@ class controller:
         if(self.checkServer()):
             self.view.robotAvailable()
             self.window.update()
-            for i in range(10):
+            for i in range(20):
                 if(self.gameboard.lost_status == 1):
                     break
                 self.view.robotOn(i)
